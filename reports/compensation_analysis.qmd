@@ -1,0 +1,192 @@
+---
+title: "Compensation Analysis Report"
+author: "Compensation Analytics"
+date: "`r Sys.Date()`"
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-fold: true
+    self-contained: true
+params:
+  specialty: "All"
+  start_date: !r Sys.Date() - 365
+  end_date: !r Sys.Date()
+  report_type: "Executive Summary"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(knitr)
+
+# Source analytics functions
+source("../R/analytics.R")
+source("../R/database.R")
+
+# Parameters
+specialty <- params$specialty
+start_date <- params$start_date
+end_date <- params$end_date
+report_type <- params$report_type
+
+# Load data
+data <- get_compensation_summary()
+
+# Filter data based on parameters
+if (specialty != "All") {
+  data <- data %>% filter(specialty == !!specialty)
+}
+```
+
+# Executive Summary
+
+This report provides compensation analysis for the period from `r format(start_date, "%B %d, %Y")` to `r format(end_date, "%B %d, %Y")`.
+
+```{r metrics}
+metrics <- calculate_metrics(data)
+
+summary_stats <- data.frame(
+  Metric = c(
+    "Total Physicians",
+    "Over Target",
+    "Under Target",
+    "% Over Target",
+    "Average Variance %",
+    "Total Compensation",
+    "Average Compensation"
+  ),
+  Value = c(
+    format(metrics$total_physicians),
+    format(metrics$over_target),
+    format(metrics$under_target),
+    sprintf("%.1f%%", metrics$pct_over_target),
+    sprintf("%.2f%%", metrics$avg_variance_pct),
+    sprintf("$%.0f", metrics$total_compensation),
+    sprintf("$%.0f", metrics$avg_compensation)
+  )
+)
+
+knitr::kable(summary_stats, caption = "Key Metrics")
+```
+
+# Detailed Analysis
+
+## Compensation by Specialty
+
+```{r variance_by_specialty}
+specialty_variance <- variance_by_specialty(data)
+
+p <- ggplot(specialty_variance, aes(x = reorder(specialty, -avg_variance_pct), 
+                                     y = avg_variance_pct, 
+                                     fill = avg_variance_pct > 0)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("red", "green")) +
+  labs(
+    title = "Average Compensation Variance by Specialty",
+    x = "Specialty",
+    y = "Variance %"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")
+
+ggplotly(p)
+```
+
+## Variance Table
+
+```{r variance_table}
+specialty_variance %>%
+  mutate(
+    avg_target = sprintf("$%.0f", avg_target),
+    avg_actual = sprintf("$%.0f", avg_actual),
+    avg_variance = sprintf("$%.0f", avg_variance),
+    avg_variance_pct = sprintf("%.2f%%", avg_variance_pct)
+  ) %>%
+  knitr::kable(caption = "Compensation Analysis Summary")
+```
+
+## Outlier Analysis
+
+```{r outliers}
+outlier_data <- identify_outliers(data, threshold = 2)
+outliers <- outlier_data %>% filter(is_outlier)
+
+if (nrow(outliers) > 0) {
+  cat("### Physicians with Significant Variance\n\n")
+  outliers %>%
+    select(physician_name, specialty, target_comp, actual_comp, variance_pct) %>%
+    mutate(
+      target_comp = sprintf("$%.0f", target_comp),
+      actual_comp = sprintf("$%.0f", actual_comp),
+      variance_pct = sprintf("%.2f%%", variance_pct)
+    ) %>%
+    knitr::kable()
+} else {
+  cat("No significant outliers detected in this period.\n")
+}
+```
+
+## Summary Statistics
+
+```{r summary_stats}
+stats <- get_summary_stats(data)
+
+summary_table <- data.frame(
+  Statistic = c("Minimum", "Q1", "Median", "Mean", "Q3", "Maximum", "Std Dev"),
+  Value = c(
+    sprintf("$%.0f", stats$min_comp),
+    sprintf("$%.0f", stats$q1_comp),
+    sprintf("$%.0f", stats$median_comp),
+    sprintf("$%.0f", stats$mean_comp),
+    sprintf("$%.0f", stats$q3_comp),
+    sprintf("$%.0f", stats$max_comp),
+    sprintf("$%.0f", stats$sd_comp)
+  )
+)
+
+knitr::kable(summary_table, caption = "Compensation Distribution Statistics")
+```
+
+# Trends
+
+```{r trends}
+if ("date" %in% names(data)) {
+  trends <- analyze_trends(data)
+  
+  if (!is.null(trends)) {
+    p <- ggplot(trends, aes(x = date, y = avg_comp)) +
+      geom_line() +
+      geom_point() +
+      labs(
+        title = "Compensation Trend",
+        x = "Date",
+        y = "Average Compensation ($)"
+      ) +
+      theme_minimal()
+    
+    ggplotly(p)
+  }
+} else {
+  cat("Trend data not available.\n")
+}
+```
+
+# Recommendations
+
+Based on this analysis, consider the following:
+
+1. **Variance Monitoring**: Continue monitoring specialties with high variance percentages
+2. **Outlier Review**: Review outlier cases for additional context and fairness validation
+3. **Benchmarking**: Compare results against industry benchmarks for similar specialties
+4. **Follow-up**: Schedule reviews with departments showing significant deviations
+
+---
+
+*Report generated: `r format(Sys.time(), "%B %d, %Y at %H:%M:%S")`*
+*Specialty Filter: `r specialty`*
+*Report Type: `r report_type`*

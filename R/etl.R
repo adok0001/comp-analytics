@@ -62,18 +62,42 @@ transform_data <- function(data) {
   data %>%
     # Standardize column names
     rename_with(tolower) %>%
-    # Clean whitespace (use base `trimws` to avoid extra stringr dependency)
+    # Clean whitespace
     mutate(across(where(is.character), ~trimws(.x))) %>%
     # Convert numeric columns
     mutate(
-      target_comp = as.numeric(gsub("[^0-9.]", "", target_comp)),
-      actual_comp = as.numeric(gsub("[^0-9.]", "", actual_comp))
+      target_comp  = as.numeric(gsub("[^0-9.]", "", target_comp)),
+      actual_comp  = as.numeric(gsub("[^0-9.]", "", actual_comp)),
+      hours_worked = as.numeric(hours_worked),
+      service_month = sprintf("%02d", as.integer(service_month)),
+      service_year  = as.integer(service_year)
+    ) %>%
+    # Build service_period as first day of service month
+    mutate(
+      service_period = as.Date(
+        paste(service_year, service_month, "01", sep = "-"),
+        format = "%Y-%m-%d"
+      )
+    ) %>%
+    # Default reporting_period to service_period when not supplied
+    mutate(
+      reporting_period = if ("reporting_period" %in% names(.)) {
+        as.Date(reporting_period)
+      } else {
+        service_period
+      }
+    ) %>%
+    # Standardise categorical fields
+    mutate(
+      role            = ifelse(is.na(role) | role == "",            "Attending",  role),
+      employment_type = ifelse(is.na(employment_type) | employment_type == "", "Full-time", employment_type),
+      location        = ifelse(is.na(location) | location == "",    "Main Campus", location)
     ) %>%
     # Calculate derived columns
     mutate(
-      variance = actual_comp - target_comp,
+      variance     = actual_comp - target_comp,
       variance_pct = (variance / target_comp) * 100,
-      entry_date = Sys.Date()
+      entry_date   = Sys.Date()
     ) %>%
     # Remove duplicates
     distinct()
@@ -86,8 +110,10 @@ validate_data <- function(data) {
   errors <- c()
   
   # Check required columns
-  required_cols <- c("physician_id", "physician_name", "specialty", 
-                    "target_comp", "actual_comp")
+  required_cols <- c("physician_id", "physician_name", "specialty",
+                     "role", "location", "employment_type",
+                     "service_month", "service_year", "hours_worked",
+                     "target_comp", "actual_comp")
   missing_cols <- setdiff(required_cols, names(data))
   if (length(missing_cols) > 0) {
     errors <- c(errors, paste("Missing columns:", paste(missing_cols, collapse = ", ")))
@@ -146,13 +172,19 @@ load_data <- function(data) {
 #' @return Sample raw data frame
 get_sample_raw_data <- function() {
   data.frame(
-    physician_id = 1:10,
-    physician_name = paste0("Dr. ", LETTERS[1:10]),
-    specialty = rep(c("Cardiology", "Orthopedics"), 5),
-    target_comp = c(350000, 400000, 350000, 400000, 350000,
-                   400000, 350000, 400000, 350000, 400000),
-    actual_comp = c(345000, 420000, 352000, 395000, 355000,
-                   410000, 348000, 425000, 360000, 405000),
+    physician_id    = 1:10,
+    physician_name  = paste0("Dr. ", LETTERS[1:10]),
+    specialty       = rep(c("Cardiology", "Orthopedics"), 5),
+    role            = rep(c("Attending", "Fellow", "Attending", "NP", "Attending"), 2),
+    location        = rep(c("Main Campus", "North Clinic"), 5),
+    employment_type = rep(c("Full-time", "Full-time", "Part-time", "Full-time", "Contract"), 2),
+    service_month   = rep("01", 10),
+    service_year    = rep(2025L, 10),
+    hours_worked    = rep(c(160, 168, 80, 176, 160), 2),
+    target_comp     = c(350000, 400000, 350000, 400000, 350000,
+                        400000, 350000, 400000, 350000, 400000),
+    actual_comp     = c(345000, 420000, 352000, 395000, 355000,
+                        410000, 348000, 425000, 360000, 405000),
     stringsAsFactors = FALSE
   )
 }

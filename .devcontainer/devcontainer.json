@@ -1,0 +1,25 @@
+{
+  "name": "Compensation Analytics",
+  "image": "rocker/geospatial:latest",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.R",
+        "quarto.quarto",
+        "ms-python.python"
+      ],
+      "settings": {
+        "r.lsp.use_stdio": true,
+        "r.session.working_dir": "${workspaceFolder}",
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true
+      }
+    }
+  },
+  "postCreateCommand": "make install",
+  "remoteUser": "root"
+}

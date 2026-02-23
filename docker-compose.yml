@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3838:3838"
+    environment:
+      - DB_DRIVER=PostgreSQL Unicode
+      - DB_SERVER=database
+      - DB_NAME=compensation
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_TRUSTED_CONN=no
+      - USER_ROLE=viewer
+    depends_on:
+      - database
+    volumes:
+      - ./data:/srv/shiny-server/data
+      - ./logs:/srv/shiny-server/logs
+
+  database:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=compensation
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql:/docker-entrypoint-initdb.d
+
+volumes:
+  postgres_data:

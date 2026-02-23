@@ -1,0 +1,57 @@
+# Environment files
+.env
+.env.local
+.env.production
+
+# R specific
+.Rdata
+.Rhistory
+.Rproj.user/
+*.Rproj
+renv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build
+/node_modules
+dist/
+build/
+
+# Output
+/reports/output
+reports/*.html
+
+# Docker
+.dockerignore
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Python/Jupyter
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Data output (ETL-generated files, keep only compensation_raw.csv)
+data/compensation_2*.csv
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+renv.lock.example

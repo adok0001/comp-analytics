@@ -25,6 +25,7 @@ RUN install2.r --error \
     tidyr \
     ggplot2 \
     plotly \
+    DT \
     data.table \
     rmarkdown \
     quarto \
@@ -36,6 +37,7 @@ COPY R/ /srv/shiny-server/R/
 COPY sql/ /srv/shiny-server/sql/
 COPY reports/ /srv/shiny-server/reports/
 COPY data/ /srv/shiny-server/data/
+COPY tests/ /srv/shiny-server/tests/
 COPY www/ /srv/shiny-server/www/
 
 # Set working directory

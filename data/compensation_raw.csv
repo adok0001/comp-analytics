@@ -1,0 +1,16 @@
+physician_id,physician_name,specialty,role,location,employment_type,service_month,service_year,hours_worked,target_comp,actual_comp
+1,Dr. Alice Johnson,Cardiology,Attending,Main Campus,Full-time,01,2025,160,350000,345000
+2,Dr. Bob Smith,Orthopedics,Attending,North Clinic,Full-time,01,2025,168,400000,420000
+3,Dr. Carol Davis,Cardiology,Fellow,Main Campus,Full-time,01,2025,176,350000,352000
+4,Dr. David Wilson,Oncology,Attending,Cancer Center,Full-time,01,2025,160,380000,375000
+5,Dr. Emma Brown,Neurology,Attending,Main Campus,Part-time,01,2025,80,370000,360000
+6,Dr. Frank Miller,Pediatrics,Attending,South Clinic,Full-time,01,2025,168,320000,330000
+7,Dr. Grace Lee,Cardiology,NP,Main Campus,Full-time,01,2025,160,350000,348000
+8,Dr. Henry Taylor,Orthopedics,Attending,North Clinic,Full-time,01,2025,176,400000,425000
+9,Dr. Iris Martinez,Oncology,PA,Cancer Center,Full-time,01,2025,160,380000,385000
+10,Dr. Jack Anderson,Neurology,Attending,Main Campus,Full-time,01,2025,168,370000,375000
+11,Dr. Karen White,Pediatrics,Resident,South Clinic,Full-time,01,2025,200,320000,318000
+12,Dr. Leo Jackson,Cardiology,Attending,East Campus,Full-time,01,2025,160,350000,355000
+13,Dr. Mia Scott,Orthopedics,Fellow,North Clinic,Full-time,01,2025,176,400000,410000
+14,Dr. Noah Green,Oncology,Attending,Cancer Center,Locum Tenens,01,2025,120,380000,378000
+15,Dr. Olivia Garcia,Neurology,Attending,Main Campus,Full-time,01,2025,168,370000,365000

@@ -1,0 +1,29 @@
+Package: compensation-analytics
+Title: Compensation Analytics Dashboard
+Version: 1.0.0
+Date: 2025-06-23
+Author: Tamara Adokeme
+Maintainer: analytics@example.com
+Description: Production Shiny dashboard for physician compensation analysis with 
+  role-based authentication, automated ETL in R and SQL, parameterized Quarto 
+  reports, variance analysis, and Docker deployment. Supports PostgreSQL and 
+  SQL Server via ODBC. Falls back to sample data when no database is configured.
+License: MIT
+Imports:
+    shiny,
+    shinydashboard,
+    DBI,
+    DT,
+    dplyr,
+    tidyr,
+    ggplot2,
+    plotly,
+    rmarkdown,
+    quarto,
+    odbc,
+    RPostgres
+Suggests:
+    testthat,
+    knitr
+Encoding: UTF-8
+RoxygenNote: 7.2.0

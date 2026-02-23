@@ -59,15 +59,20 @@ refresh_data_from_db <- function() {
 #' @return Data frame with sample compensation data
 get_sample_data <- function() {
   data.frame(
-    physician_id = 1:15,
-    physician_name = paste0("Dr. ", LETTERS[1:15]),
-    specialty = rep(c("Cardiology", "Orthopedics", "Oncology", "Neurology", "Pediatrics"), 3),
-    target_comp = rep(c(350000, 400000, 380000, 370000, 320000), 3),
-    actual_comp = rep(c(345000, 420000, 375000, 360000, 330000), 3),
-    variance = rep(c(-5000, 20000, -5000, -10000, 10000), 3),
-    variance_pct = rep(c(-1.4, 5.0, -1.3, -2.7, 3.1), 3),
-    date = rep(seq.Date(Sys.Date() - 365, Sys.Date(), by = "month")[1:3], 5),
-    compensation = rep(c(340000, 345000, 348000), 5)
+    physician_id    = 1:15,
+    physician_name  = paste0("Dr. ", LETTERS[1:15]),
+    specialty       = rep(c("Cardiology", "Orthopedics", "Oncology", "Neurology", "Pediatrics"), 3),
+    role            = rep(c("Attending", "Fellow", "Attending", "NP", "Resident"), 3),
+    location        = rep(c("Main Campus", "North Clinic", "Cancer Center", "Main Campus", "South Clinic"), 3),
+    employment_type = rep(c("Full-time", "Full-time", "Full-time", "Part-time", "Full-time"), 3),
+    service_period  = rep(seq.Date(as.Date("2025-01-01"), by = "month", length.out = 3), 5),
+    hours_worked    = rep(c(160, 168, 160, 80, 176), 3),
+    target_comp     = rep(c(350000, 400000, 380000, 370000, 320000), 3),
+    actual_comp     = rep(c(345000, 420000, 375000, 360000, 330000), 3),
+    variance        = rep(c(-5000, 20000, -5000, -10000, 10000), 3),
+    variance_pct    = rep(c(-1.4, 5.0, -1.3, -2.7, 3.1), 3),
+    date            = rep(seq.Date(Sys.Date() - 365, Sys.Date(), by = "month")[1:3], 5),
+    compensation    = rep(c(340000, 345000, 348000), 5)
   )
 }
 
