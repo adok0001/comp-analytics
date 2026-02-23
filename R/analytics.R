@@ -92,9 +92,16 @@ analyze_trends <- function(data) {
 #' @param threshold Standard deviations for outlier detection (default: 2)
 #' @return Data frame with outlier flag
 identify_outliers <- function(data, threshold = 2) {
+  mean_val <- mean(data$actual_comp, na.rm = TRUE)
+  sd_val <- sd(data$actual_comp, na.rm = TRUE)
+  if (is.na(sd_val) || sd_val == 0) {
+    data$z_score <- 0
+    data$is_outlier <- FALSE
+    return(data)
+  }
   data %>%
     mutate(
-      z_score = scale(actual_comp)[, 1],
+      z_score = (actual_comp - mean_val) / sd_val,
       is_outlier = abs(z_score) > threshold
     )
 }

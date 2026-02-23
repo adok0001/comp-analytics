@@ -59,7 +59,7 @@ extract_data <- function(source_file = NULL) {
 #' @param data Raw data frame
 #' @return Transformed data frame
 transform_data <- function(data) {
-  data %>
+  data %>%
     # Standardize column names
     rename_with(tolower) %>%
     # Clean whitespace (use base `trimws` to avoid extra stringr dependency)
