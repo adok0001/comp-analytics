@@ -1,5 +1,7 @@
 library(testthat)
 
+# ensure tests run from project root
+setwd("..")
 source("R/etl.R")
 
 test_that("extract_data returns sample when file missing", {

@@ -1,5 +1,7 @@
 library(testthat)
 
+# ensure tests run from project root
+setwd("..")
 source("R/analytics.R")
 
 test_that("calculate_variance computes correct values and category", {

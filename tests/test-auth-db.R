@@ -1,5 +1,7 @@
 library(testthat)
 
+# ensure tests run from project root
+setwd("..")
 source("R/auth.R")
 source("R/database.R")
 
